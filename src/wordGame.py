@@ -1,6 +1,7 @@
 from langgraph.graph import START, END, StateGraph
 from typing import TypedDict, Annotated, Sequence, Dict, List
 import numpy as np
+import logging
 
 words = ["apple", "chair", "elephant", "guitar", "pizza", "tiger", "rocket", "pencil"]
 questions = ["Is it a fruit?",
@@ -19,6 +20,9 @@ questions = ["Is it a fruit?",
     "Does it launch into the sky using fuel?",
     "Is it used for writing or drawing?",
     "Does it contain graphite inside?"]
+
+logging.basicConfig(format='%(asctime)s %(message)s',level=logging.INFO,filename='newfile.log')
+logger = logging.getLogger()
 
 class wordGameAgent:
     _instance = None
@@ -94,4 +98,5 @@ class wordGameAgent:
         app2 = workflow.compile()
 
         responses = app2.invoke({'userChoice':user_inputs,'questions':questions,'words':words},{'recursion_limit':50})
+        logger.info(f'Word game responses: {responses}')
         return

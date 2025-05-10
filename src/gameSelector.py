@@ -2,6 +2,10 @@ from langgraph.graph import START, END, StateGraph
 from typing import TypedDict, Annotated, Sequence, Dict, List
 from src.numberGame import numberGameAgent
 from src.wordGame import wordGameAgent
+import logging
+
+logging.basicConfig(format='%(asctime)s %(message)s',level=logging.INFO,filename='newfile.log')
+logger = logging.getLogger()
 
 class SelectorGameAgent:
     _instance = None
@@ -78,4 +82,5 @@ Please select from option 1,2,3 to proceed.
         app3 = workflow.compile()
 
         responses = app3.invoke({'wordGames':0, 'numberGames':0},{'recursion_limit':50})
+        logger.info(f'Game selector responses: {responses}')
         return

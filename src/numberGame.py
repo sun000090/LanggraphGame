@@ -1,5 +1,9 @@
 from langgraph.graph import START, END, StateGraph
 from typing import TypedDict, Annotated, Sequence, Dict, List
+import logging
+
+logging.basicConfig(format='%(asctime)s %(message)s',level=logging.INFO,filename='newfile.log')
+logger = logging.getLogger()
 
 class numberGameAgent:
     _instance = None
@@ -69,4 +73,5 @@ class numberGameAgent:
         app1 = workflow.compile()
 
         responses = app1.invoke({'userInput':user_inputs,'lowNum':1,'highNum':50},{'recursion_limit':50})
+        logger.info(f'Number game responses: {responses}')
         return
