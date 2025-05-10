@@ -4,13 +4,33 @@ from src.numberGame import numberGameAgent
 from src.wordGame import wordGameAgent
 
 class SelectorGameAgent:
-    def selectorGame():
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super(SelectorGameAgent, cls).__new__(cls)
+        return cls._instance
+
+    @staticmethod
+    def get_instance():
+        if SelectorGameAgent._instance is None:
+            SelectorGameAgent()
+        return SelectorGameAgent._instance
+
+    def __init__(self):
+        if not hasattr(self, 'initialized'):
+            self.initialized = True
+
+    def selectorGame(self):
         def game_selector(state):
             print('''
-            Welcome to the gaming arcade. We offer the following games:
-            1. Number Game
-            2. Word Game
-            3. Exit
+Welcome to the gaming arcade. We offer the following games:
+                  
+    1. Number Game
+    2. Word Game
+    3. Exit
+                  
+Please select from option 1,2,3 to proceed.
             ''')
             userChoice = int(input())
             state['choices'] = userChoice
@@ -21,17 +41,19 @@ class SelectorGameAgent:
                 print('\nWelcome to the number game. Please think of a number between 1 to 50.')
                 number_games += 1
                 state['numberGames'] = number_games
-                numberGameAgent.numberGame(user_inputs=int(input()))
+                user_inputs = int(input())
+                numberGameAgent().numberGame(user_inputs=user_inputs)
                 return state
             elif userChoice == 2:
                 print('\nWelcome to the word game. Please select a word from the given list.')
                 print(["apple", "chair", "elephant", "guitar", "pizza", "tiger", "rocket", "pencil"])
                 word_games += 1
                 state['wordGames'] = word_games
-                wordGameAgent.wordGame(user_inputs=input())
+                user_inputs = input()
+                wordGameAgent().wordGame(user_inputs=user_inputs)
                 return state
             else:
-                print(f'\nYou played {number_games} number games and {word_games} word games')
+                print(f'\nThank you for playing. You played {number_games} number games and {word_games} word games')
                 return state
             
         def interfaces(state):

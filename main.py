@@ -1,3 +1,3 @@
 from src.gameSelector import SelectorGameAgent
 
-SelectorGameAgent.selectorGame()
+SelectorGameAgent().selectorGame()

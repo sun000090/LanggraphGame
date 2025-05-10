@@ -21,7 +21,24 @@ questions = ["Is it a fruit?",
     "Does it contain graphite inside?"]
 
 class wordGameAgent:
-    def wordGame(user_inputs):
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super(wordGameAgent, cls).__new__(cls)
+        return cls._instance
+
+    @staticmethod
+    def get_instance():
+        if wordGameAgent._instance is None:
+            wordGameAgent()
+        return wordGameAgent._instance
+
+    def __init__(self):
+        if not hasattr(self, 'initialized'):
+            self.initialized = True
+
+    def wordGame(self, user_inputs):
         def choice_record(state):
             choice_input = state['userChoice']
             questions = state['questions']
@@ -45,7 +62,7 @@ class wordGameAgent:
             answer_given = state['answer']
             user_given = state['userChoice']
             if answer_given == user_given:
-                print(f'Answer is {user_given}. I guessed it right.')
+                print(f'\nAnswer is {user_given}. I guessed it right.')
                 print('Returning to main menu.')
                 return 'TRUE'
             else:

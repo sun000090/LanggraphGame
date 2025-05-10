@@ -2,7 +2,24 @@ from langgraph.graph import START, END, StateGraph
 from typing import TypedDict, Annotated, Sequence, Dict, List
 
 class numberGameAgent:
-    def numberGame(user_inputs):
+    _instance = None
+
+    def __new__(cls, *args, **kwargs):
+        if cls._instance is None:
+            cls._instance = super(numberGameAgent, cls).__new__(cls)
+        return cls._instance
+
+    @staticmethod
+    def get_instance():
+        if numberGameAgent._instance is None:
+            numberGameAgent()
+        return numberGameAgent._instance
+
+    def __init__(self):
+        if not hasattr(self, 'initialized'):
+            self.initialized = True
+
+    def numberGame(self, user_inputs):
         def binary_search_number(state):
             number_input = state['userInput']
             lowNum = state['lowNum']
