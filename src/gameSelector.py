@@ -1,5 +1,6 @@
 from langgraph.graph import START, END, StateGraph
 from typing import TypedDict, Annotated, Sequence, Dict, List
+from src.gameState import State
 from src.numberGame import numberGameAgent
 from src.wordGame import wordGameAgent
 import logging
@@ -25,9 +26,8 @@ class SelectorGameAgent:
         if not hasattr(self, 'initialized'):
             self.initialized = True
 
-    def selectorGame(self):
-        def game_selector(state):
-            print('''
+    def selectorGame(self, state: State):
+        print('''
 Welcome to the gaming arcade. We offer the following games:
                   
     1. Number Game
@@ -36,51 +36,32 @@ Welcome to the gaming arcade. We offer the following games:
                   
 Please select from option 1,2,3 to proceed.
             ''')
-            userChoice = int(input())
-            state['choices'] = userChoice
-            word_games = state['wordGames']
-            number_games = state['numberGames']
-            
-            if userChoice == 1:
-                print('\nWelcome to the number game. Please think of a number between 1 to 50.')
-                number_games += 1
-                state['numberGames'] = number_games
-                user_inputs = int(input())
-                numberGameAgent().numberGame(user_inputs=user_inputs)
-                return state
-            elif userChoice == 2:
-                print('\nWelcome to the word game. Please select a word from the given list.')
-                print(["apple", "chair", "elephant", "guitar", "pizza", "tiger", "rocket", "pencil"])
-                word_games += 1
-                state['wordGames'] = word_games
-                user_inputs = input()
-                wordGameAgent().wordGame(user_inputs=user_inputs)
-                return state
-            else:
-                print(f'\nThank you for playing. You played {number_games} number games and {word_games} word games')
-                return state
-            
-        def interfaces(state):
-            choices = state['choices']
-            if (choices == 1) or (choices == 2):
-                return 'TRUE'
-            else:
-                return 'FALSE'
-            
-        class SelectorGameGraphState(TypedDict):
-            choices : int
-            wordGames : int
-            numberGames : int
-
-        workflow = StateGraph(SelectorGameGraphState)
-
-        workflow.add_node('game_selector',game_selector)
-
-        workflow.set_entry_point("game_selector")
-        workflow.add_conditional_edges("game_selector",interfaces,{'TRUE':'game_selector','FALSE':END})
         
-        app3 = workflow.compile()
-
-        responses = app3.invoke({'wordGames':0, 'numberGames':0},{'recursion_limit':50})
-        logger.info(f'Game selector responses: {responses}')
-        return
+        userChoice = int(input())
+        state.choices = userChoice
+        word_games = state.wordGames
+        number_games = state.numberGames
+        
+        if userChoice == 1:
+            print('\nWelcome to the number game. Please think of a number between 1 to 50.')
+            number_games += 1
+            state.numberGames = number_games
+            state.gamePlaying = 'number_game'
+            print('\nEnter your choice: ')
+            state.userInput = int(input())
+            numberGameAgent().numberGame(state = state)
+            return state
+        elif userChoice == 2:
+            print('\nWelcome to the word game. Please select a word from the given list.')
+            print(["apple", "chair", "elephant", "guitar", "pizza", "tiger", "rocket", "pencil"])
+            word_games += 1
+            state.wordGames = word_games
+            state.gamePlaying = 'word_game'
+            print('\nEnter your choice: ')
+            state.userChoice = input()
+            wordGameAgent().wordGame(state = state)
+            return state
+        else:
+            state.gamePlaying = 'END'
+            print(f'\nThank you for playing. You played {number_games} number games and {word_games} word games')
+            return state
